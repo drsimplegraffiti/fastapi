@@ -14,6 +14,61 @@
 #### Setup
 https://fastapi.tiangolo.com/
 
+#### Build cli using Typer
+https://typer.tiangolo.com/
+
+#### Fast api uses: 
+- starlette: for web servers, https://www.starlette.dev/
+    - Starlette is designed to be used either as a complete framework, or as an ASGI toolkit.
+    - Starlette is a lightweight ASGI framework/toolkit, which is ideal for building async web services in Python.
+- pydantic: Build and validate data with Pydantic Validation
+
+
+
+### use 
+```bash
+fastapi dev # to run instead of uvivorn
+# ensure to install "fastapi[standard]" in your requirements .txt
+```
+The command fastapi dev reads your main.py file automatically, detects the FastAPI app in it, and starts a server using Uvicorn.
+By default, fastapi dev will start with auto-reload enabled for local development.
+
+
+#### deploy
+```bash
+fastapi deploy
+```
+
+### standard Dependencies¶
+When you install FastAPI with pip install "fastapi[standard]" it comes with the standard group of optional dependencies:
+
+Used by Pydantic:
+    email-validator - for email validation.
+
+Used by Starlette:
+    httpx - Required if you want to use the TestClient.
+    jinja2 - Required if you want to use the default template configuration.
+    python-multipart - Required if you want to support form "parsing", with request.form().
+
+Used by FastAPI:
+    uvicorn - for the server that loads and serves your application. This
+    includes uvicorn[standard], which includes some dependencies (e.g. uvloop)
+    needed for high performance serving.
+
+    fastapi-cli[standard] - to provide the fastapi command.
+        This includes fastapi-cloud-cli, which allows you to deploy your FastAPI application to FastAPI Cloud.
+
+### Without standard Dependencies¶
+If you don't want to include the standard optional dependencies, you can
+install with pip install fastapi instead of pip install "fastapi[standard]".
+Without fastapi-cloud-cli¶
+
+If you want to install FastAPI with the standard dependencies but without the
+fastapi-cloud-cli, you can install with pip install
+"fastapi[standard-no-fastapi-cloud-cli]".
+
+FastAPI is actually a sub-class of Starlette. 
+
 ### install fastapi globally or in the virtual env
 ```bash
 #update/upgrade pip
@@ -556,3 +611,54 @@ def get_user(
         )
     return user
 ```
+
+
+#### Env variable
+💬 You could create an env var MY_NAME with
+export MY_NAME="Wade Wilson"
+
+💬 Then you could use it with other programs, like
+echo "Hello $MY_NAME"
+
+Hello Wade Wilson
+
+### Read env in python
+```python
+import os
+
+name = os.getenv("MY_NAME", "WORLD")
+print(f"hello ${name}")
+```
+
+```python
+💬 Here we don't set the env var yet
+python main.py
+
+💬 As we didn't set the env var, we get the default value
+
+Hello World from Python
+
+💬 But if we create an environment variable first
+export MY_NAME="Wade Wilson"
+
+💬 And then call the program again
+python main.py
+
+💬 Now it can read the environment variable
+
+Hello Wade Wilson from Python
+```
+
+
+
+#### virtual envs
+create using venv module:
+python -m venv .venv
+
+create using uv
+uv venv
+
+### activate virtual env
+linux/macos: source .venv/bin/activate
+windows powershell: .venv\Scripts\Activate.ps1
+windows bash: source .venv/Scripts/activate
