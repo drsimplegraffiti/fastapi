@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from datetime import date, datetime
 from typing import Any
 from typing import Annotated
+from enum import Enum
 
 router = APIRouter(prefix="/tutorial", tags=["Tutorial"])
 
@@ -95,18 +96,40 @@ class ExternalData(BaseModel):
     signup_ts: datetime | None = None
     friends: list[int] = []
 
+
 @router.post("/data")
-def data_items(): 
+def data_items():
     external_data = {
         "id": "123",
         "signup_ts": "2017-06-01 12:22",
         "friends": [1, "2", b"3"],
     }
-    data= ExternalData(**external_data)
+    data = ExternalData(**external_data)
     return data
-
 
 
 @router.post("/data-annotation")
 def say_hello(name: Annotated[str, "this is just metadata"]) -> str:
     return f"Hello {name}"
+
+
+class ModelName(str, Enum):
+    alexnet = "alexnet"
+    resnet = "resnet"
+    lenet = "lenet"
+
+
+@router.get("/models/{model_name}")
+async def get_model(model_name: ModelName):
+    if model_name is ModelName.alexnet:
+        return {"model_name": model_name, "message": "Deep Learning FTW!"}
+
+    if model_name.value == "lenet":
+        return {"model_name": model_name, "message": "LeCNN all the images"}
+
+    return {"model_name": model_name, "message": "Have some residuals"}
+
+
+@router.get("/files/{file_path:path}")
+async def read_file(file_path: str):
+    return {"file_path": file_path}

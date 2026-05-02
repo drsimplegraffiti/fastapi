@@ -27,7 +27,7 @@ https://typer.tiangolo.com/
 
 ### use 
 ```bash
-fastapi dev # to run instead of uvivorn
+fastapi dev # to run instead of uvivorn or use `fastapi run`
 # ensure to install "fastapi[standard]" in your requirements .txt
 ```
 The command fastapi dev reads your main.py file automatically, detects the FastAPI app in it, and starts a server using Uvicorn.
@@ -662,3 +662,171 @@ uv venv
 linux/macos: source .venv/bin/activate
 windows powershell: .venv\Scripts\Activate.ps1
 windows bash: source .venv/Scripts/activate
+
+### check if virtual env is active
+```bash
+which python ##mac and linux
+Get-Command python #windows
+```
+
+```bash
+~/Downloads/fastapi-env main wip ❯ which python                                                                                                                    4s   fastapi-env   system
+/usr/bin/python
+~/Downloads/fastapi-env main wip ❯ source .venv/bin/activate                                                                                                            fastapi-env   system
+
+~/Downloads/fastapi-env main wip ❯ which python                                                                                                                         fastapi-env   system
+/home/xybug/Downloads/fastapi-env/.venv/bin/python
+```
+
+#### upgrade pip
+If you use uv you would use it to install things instead of pip, so you don't need to upgrade pip. 
+If you are using pip to install packages (it comes by default with Python), you
+should upgrade it to the latest version.
+Many exotic errors while installing a package are solved by just upgrading pip first.
+
+#### upgrade pip command
+```bash
+source .venv/bin/activate 
+python -m pip install --upgrade pip
+```
+
+Sometimes, you might get a No module named pip error when trying to upgrade pip.
+If this happens, install and upgrade pip using the command below:
+```bash
+python -m ensurepip --upgrade
+```
+
+
+### Add .gitignore
+If you are using Git (you should), add a .gitignore file to exclude everything in your .venv from Git.
+If you used uv to create the virtual environment, it already did this for you, you can skip this step. 
+Do this once, right after you create the virtual environment.
+```bash
+echo "*" > .venv/.gitignore
+```
+
+### Install packages directly
+If you're in a hurry and don't want to use a file to declare your project's
+package requirements, you can install them directly.
+
+Note: It's a (very) good idea to put the packages and versions your program
+needs in a file (for example requirements.txt or pyproject.toml).
+
+using uv:
+```bash
+uv pip install "fastapi[standard]"
+```
+using pip:
+```bash
+pip install "fastapi[standard]"
+```
+
+### Install from requirements.txt¶
+pip:
+```bash
+pip install -r requirements.txt
+```
+uv:
+```bash
+uv pip install -r requirements.txt
+```
+
+A requirements.txt with some packages could look like:
+```bash
+fastapi[standard]==0.113.0
+pydantic==2.8.0
+```
+
+
+### Run Your Program¶
+
+After you activated the virtual environment, you can run your program, and it
+will use the Python inside of your virtual environment with the packages you
+installed there.
+```bash
+python main.py
+Hello World
+```
+
+### Activating path
+Activating a virtual environment adds its path .venv/bin (on Linux and macOS)
+    or .venv\Scripts (on Windows) to the PATH environment variable.
+
+### Why deactivate
+But if you deactivate the virtual environment and activate the new one for
+project A then when you run python it will use the Python from the
+virtual environment in projectB.
+
+
+### Installing FastApi
+```bash
+
+pip install "fastapi[standard]" # if you want default optional standard
+dependencies, including fastapi-cloud-cli, which allows you to deploy to
+FastAPI Cloud
+
+pip install fastapi
+If you don't want to have those optional dependencies
+
+If you want to install the standard dependencies but without the
+fastapi-cloud-cli, you can install with pip install
+"fastapi[standard-no-fastapi-cloud-cli]".
+```
+
+#### Create a simple server
+Create a file named `sandbox.py`
+```bash
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/hello")
+async def home():
+    return "hi"
+```
+
+run with:
+```bash
+fastapi run sandbox.py
+# fastapi dev
+```
+
+
+### Configure the app entrypoint in pyproject.toml¶
+You can configure where your app is located in a pyproject.toml file like:
+
+```toml
+[tool.fastapi]
+entrypoint = "main:app"
+```
+If your code was structured like:
+.
+├── backend
+│   ├── main.py
+│   ├── __init__.py
+
+Then you would set the entrypoint as:
+```toml
+[tool.fastapi]
+entrypoint = "backend.main:app"
+```
+
+### When you declare other functions parameters that are not part of the path parameters,
+they are automatically interpreted as "query" parameter
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
+
+
+@app.get("/items/")
+async def read_item(skip: int = 0, limit: int = 10, q: str | None = None):
+    return f"{fake_items_db[skip : skip + limit]} and q is {q}"
+```
+
+
+### request body
+```python
+```
